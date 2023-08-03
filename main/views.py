@@ -16,13 +16,11 @@ def index(request):
         fi={}
         try:
 
-            # dat = urllib.request.urlopen('http://api.openweathermap.org/data/2.5/weather?q=' +
-                                         #   place + '&units=imperial&appid=8cfc90746aa1c90a57f84a1c867f0a79').read()
-            #dat = urllib.request.urlopen(f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=imperial&exclude=current,minutely,hourly,alerts&appid=febb7fc684dc6e7ca367b3d621349774').read()
+            
             al_dat=[]
 
 
-            dat = urllib.request.urlopen(f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&units=imperial&exclude=minutely,hourly,alerts&appid=febb7fc684dc6e7ca367b3d621349774').read()
+            dat = urllib.request.urlopen(f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&units=imperial&exclude=minutely,hourly,alerts&appid=yourAPIid').read()
             
             all_inf = json.loads(dat)
 
