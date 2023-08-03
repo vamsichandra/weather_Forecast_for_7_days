@@ -1,0 +1,320 @@
+<html>{% load static %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.3/cerulean/bootstrap.min.css"
+    integrity="sha512-dQLT/B7byn2LjN/DN4zeBKpwGV6qbidV0XiMRWQOL7TGrV7FkZFldkGG+DGMU+CQnMTcRZlUI7GMWt1j6akNew=="
+    crossorigin="anonymous" />
+  <title>Forecast_Weather </title>
+  <style>
+        /* Add any custom CSS styling here */
+        /* For example, set a maximum height and add a scrollbar to the forecast section */
+        .card-block {
+    min-height: 220px;
+}
+ .forecast-container {
+            max-height: 100%;
+            overflow-x: auto;
+        }
+
+        body {
+            background-image: url('{% static "images/" %}{{ data.0.image }}');
+            /* Add other CSS styles as needed */
+        }
+    
+    </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- Google Maps JavaScript library -->
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCdGv5cjpA0dMUCSolCf89tl_vgccGvsu0"></script>
+ 
+<style>
+#search_input {font-size:18px;}
+/*.form-group{
+ margin-bottom: 10px;margin-top:50px;
+}*/
+.form-group label{
+ font-size:18px;
+ font-weight: 600;
+}
+.form-group input{
+    width: 100%;
+    padding: .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.form-group input:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+</style>
+  
+</head>
+<body  >
+
+
+<img src="{% static 'images/weather.png' %}" class="image" style="width:100px; margin-bottom:-50px; " /><center><h4 class="display-5">Weather Desktop App</h4></center>
+
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <form method="post" id="myForm" class="col-md">
+    {% csrf_token %}
+    <div class="form-group">
+      <div class="row">
+  <div class="co2-xs-2 col-sm-2 col-lg-2 text-end ml-auto">
+      <label class="pull-right">City name:</label></div><div class="col-xs-7 col-sm-7 col-lg-7">
+      <input type="text" class="form-control" name="city" placeholder="Choose Your City ..." id="search_input">
+              <button type="submit" class="got" style="visibility: hidden" ></button>
+        <input type="hidden" name="latitude" class="latitudeInput">
+        <input type="hidden" name="longitude" class="longitudeInput"></div>
+        <div class="col-xs-3 col-sm-3 col-lg-3">
+        <button type="button" class="btn btn-primary" onclick="onSearchClick()">Search</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</nav>
+
+  
+
+<div class="row">
+          
+        {% if data %}
+        
+    
+    <div class="container-fluid">
+    <div class="row p-1">
+        <div class="col d-flex justify-content-center">
+            <div class="card text-white bg-dark mb-6">
+                <div class="card-body">
+                    <h6>Weather Information for {{ data.0.Timezone }}</h6>
+                    <center><h6>Current Weather:</h6></center>
+                    <p>Time: {{ data.0.time }}</p>
+                    <p>Temperature: {{ data.0.temperature }}</p>
+                    <p>Pressure: {{ data.0.pressure }}</p>
+                    <p>Humidity: {{ data.0.humidity }}</p>
+                    <p>Forecast: {{ data.0.forecast }}</p>
+                    <p>Information: {{ data.0.information }}</p>
+                    
+                    <div class="bg-white">
+                        <img src="http://openweathermap.org/img/wn/{{ data.0.icon }}.png" alt="Weather Icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+    <br/>
+    <div class="container-fluid">
+    <div class="row flex-row flex-nowrap forecast-container p-1 ">
+      
+    
+        {% for forecast_data in data %}
+            {% if not forloop.first %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 pl-1 pr-1">
+                <ul class="list-unstyled">
+                    <li class="card card-block text-white bg-primary mb-3" style="max-width: 18rem;">
+                        <div class="card-header">Forecast  {{ forloop.counter0}}</div>
+                        <div class="card-body">
+                            <p>Date: {{ forecast_data.date }}</p>
+                            <p>Temperature Min: {{ forecast_data.temp_min }}</p>
+                            <p>Temperature Max: {{ forecast_data.temp_max }}</p>
+                            <p>Humidity: {{ forecast_data.humidity }}</p>
+                            <p>Pressure: {{ forecast_data.pressure }}</p>
+                            <p>Description: {{ forecast_data.description }}</p>
+                            <div class="bg-white">
+                                <img src="http://openweathermap.org/img/wn/{{ forecast_data.icon }}.png" alt="Weather Icon">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        {% endfor %}
+      
+    
+    </div>
+  </div>
+</div>
+
+        {%endif%}
+        {% if city%}
+        <p>{{ city }}</p>
+        {% endif %}
+           </ul>
+   
+
+ 
+
+
+    
+    <!-- {% if Timezone and temperature and pressure and humidity %}
+    <div class="col d-flex justify-content-center" >
+      <div class=" card text-white bg-light mb-6">
+      <div class=" card-body">
+        <h4><span class="badge badge-primary">Country Code :</span> {{Timezone}}</h4>
+        
+        <h4><span class="badge badge-primary">Temperature in Celsius :</span> {{temperature}}</h4>
+        <h4><span class="badge badge-primary">Pressure :</span> {{pressure}} </h4>
+        <h4><span class="badge badge-primary">Humidity : </span> {{humidity}}</h4>
+        <h4><span class="badge badge-primary">Forecast : </span> {{information}} <img
+            src="http://openweathermap.org/img/w/{{icon}}.png" alt="Image" style="width:70px"></h4>
+        <h4><span class="badge badge-primary">Time : </span> {{time}}</h4>
+      </div>
+      {% endif %}  -->
+
+
+
+      
+    </div>
+    <script crossorigin="anonymous" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-LS93P40SI2zsGpcNrQ7j8TBqDAGMzE8&libraries=places"></script>
+    <script type="text/javascript">
+     
+
+    function onSearchClick() {
+    var cityInput = document.querySelector('input[name="city"]');
+    var cityName = cityInput.value;
+    getCoordinatesFromCity(cityName);
+}
+  
+     
+      su=document.getElementById("myForm");
+var successCallback = function(position){
+        var x = position.coords.latitude;
+        var y = position.coords.longitude;
+        console.log(x,y);
+        latlon(x,y);
+        //displayLocation(x,y);
+        // const geoapi="https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${x}&longitude=${y}&localityLanguage=en"
+        // fetch(geoapi).then(res=>res.json()).then(data=>{
+        //   console.log(data.city);
+        //    if (document.cookie.indexOf('formSubmitted=true') === -1) {
+        //     var expirationDate = new Date();
+        //         expirationDate.setSeconds(expirationDate.getSeconds() + 5);
+           
+        //     document.cookie = `formSubmitted=true; expires=${expirationDate.toUTCString()}; path=/`;
+
+          
+        // var cityInput = document.querySelector('input[name="city"]');
+        // cityInput.value = data.city;
+        // su.submit()}
+        // }
+        // );
+      };
+
+    
+  function getCoordinatesFromCity(city) {
+    var geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({ address: city }, function (results, status) {
+      try {
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (results[0]) {
+            var latitude = results[0].geometry.location.lat();
+            var longitude = results[0].geometry.location.lng();
+            console.log('Latitude:', latitude);
+            console.log('Longitude:', longitude);
+            latlon(latitude,longitude);
+          } else {
+            console.log('No results found with city name');
+          }
+        } else {
+          throw new Error('Geocoder failed due to: ' + status);
+        }
+      } catch (error) {
+        console.log('Error occurred:', error.message);
+      }
+    });
+  }
+
+ function latlon(latitude,longitude){
+    var form = document.getElementById('myForm');
+  // var formData = new FormData(form);
+  //           formData.append('latitude', latitude);
+  //           formData.append('longitude', longitude);
+  //           console.log(formData);
+            if (document.cookie.indexOf('formSubmitted=true') === -1) {
+                  var expirationDate = new Date();
+                expirationDate.setSeconds(expirationDate.getSeconds() + 5);
+           
+            document.cookie = `formSubmitted=true; expires=${expirationDate.toUTCString()}; path=/`;
+
+            var la = document.querySelector(".latitudeInput");
+            var lo = document.querySelector(".longitudeInput");
+            var go= document.querySelector(".got")
+
+        la.value =latitude;
+        lo.value=longitude;
+        form.submit()
+            
+            // fetch('http://127.0.0.1:8080/', {
+            //   method: 'POST',
+            //   body: formData,
+            //   headers: {
+            //     'X-CSRFToken': '{{ csrf_token }}'
+            //   }
+            // })
+            
+        
+            // form.action = 'http://127.0.0.1/8080'; // Replace with your desired URL
+            
+            // // Submit the form after adding coordinates to FormData
+            // form.method = 'POST'; // Set the method to POST
+            // form.submit();
+           }
+}
+
+ 
+
+      var errorCallback = function(error){
+        var errorMessage = 'Unknown error';
+        switch(error.code) {
+          case 1:
+            errorMessage = 'Permission denied';
+            break;
+          case 2:
+            errorMessage = 'Position unavailable';
+            break;
+          case 3:
+            errorMessage = 'Timeout';
+            break;
+        }
+        console.log(errorMessage);
+      };
+
+      var options = {
+        enableHighAccuracy: true,
+        timeout: 3000,
+        maximumAge: 0
+      };
+      
+      navigator.geolocation.getCurrentPosition(successCallback,errorCallback,options);
+      var searchInput = 'search_input';
+ 
+$(document).ready(function () {
+ var autocomplete;
+ autocomplete = new google.maps.places.Autocomplete((document.getElementById(searchInput)), {
+  types: ['geocode'],
+  /*componentRestrictions: {
+   country: "USA"
+  }*/
+ });
+  
+ google.maps.event.addListener(autocomplete, 'place_changed', function () {
+  var near_place = autocomplete.getPlace();
+ });
+});
+    
+</script>
+</body>
+
+</html>
